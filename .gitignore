@@ -1,0 +1,16 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+
+static/music/**/*.mp3
+static/music/**/*.wav
+static/music/**/*.ogg
+static/music/**/*.oga
+static/music/**/*.m4a
+static/music/**/*.aac
+static/music/**/*.opus
+static/music/**/*.flac

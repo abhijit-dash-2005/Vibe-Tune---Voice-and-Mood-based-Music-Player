@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f4"><title>VibeTune — Voice and Mood Based Music Player</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar"><a class="brand" href="#"><span class="brand-icon">♫</span> VibeTune</a><div class="topbar-actions"><span class="top-note">YOUR PERSONAL MUSIC SPACE</span><button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false"><span id="themeIcon" aria-hidden="true">☾</span><span id="themeLabel">Dark mode</span></button></div></header>
+    <section class="hero">
+      <div class="hero-copy"><div class="eyebrow"><i></i> YOUR SOUND, YOUR WAY</div><h1>Say it.<br><span>Play it.</span></h1><p>Tell VibeTune what you want to hear. Its command model understands your request and finds the right moment.</p>
+        <div class="voice-row"><button id="micButton" class="mic-button" aria-label="Start English voice command"><span>🎙</span></button><div><strong id="voiceTitle" role="status" aria-live="polite">Ready when you are</strong><small id="voiceHint">Tap the mic and speak an English command, or type one below</small></div><span id="listeningPulse" class="pulse"></span></div>
+        <div class="command-box"><input id="commandInput" placeholder="Try “play something calm”…" autocomplete="off"><button id="sendButton" aria-label="Send command">↗</button></div>
+        <div class="examples"><span>TRY</span><button data-command="Play something calm">calm</button><button data-command="Play something upbeat">upbeat</button><button data-command="Shuffle songs">shuffle</button><button data-command="Next song">next song</button></div>
+        <div class="mood-tools">
+          <button id="cameraMoodButton" class="secondary-button">Try a camera expression estimate</button>
+          <small>Optional. Processed in your browser; no image is saved or uploaded. Expressions are only an imperfect mood hint.</small>
+          <small id="cameraStatus" role="status" aria-live="polite"></small>
+          <section id="cameraRecommendations" class="camera-recommendations" aria-live="polite" hidden>
+            <strong id="cameraRecommendationTitle"></strong>
+            <div id="cameraRecommendationTracks"></div>
+          </section>
+          <video id="moodCamera" autoplay playsinline muted hidden></video>
+        </div>
+      </div>
+      <div class="visual"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="disc"><div class="disc-center"><span>♫</span></div></div><div class="sound-bars"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div><div class="float-tag tag-top">✦ &nbsp; MADE FOR THIS MOMENT</div><div class="float-tag tag-bottom"><span class="mini-dot"></span> Mood match <strong id="moodLabel">—</strong></div></div>
+    </section>
+    <section class="player-card">
+      <div class="now-playing"><div class="cover" id="coverArt"><span>♫</span></div><div class="track-info"><small>NOW PLAYING</small><strong id="trackTitle">Choose your first track</strong><span id="trackArtist">Your personal library</span></div><button id="favoriteButton" class="favorite" aria-label="Add current track to favorites" title="Add to favorites">♡</button></div>
+      <div class="controls"><div class="timeline"><span id="currentTime">0:00</span><input id="seekBar" type="range" min="0" max="100" value="0"><span id="duration">0:00</span></div><div class="buttons"><button id="previousButton" aria-label="Previous track">|◀</button><button id="playButton" class="play-button" aria-label="Play">▶</button><button id="nextButton" aria-label="Next track">▶|</button></div></div>
+      <div class="volume"><button id="shuffleButton" class="mode-button" aria-label="Toggle shuffle" title="Shuffle">🔀</button><button id="repeatButton" class="mode-button" aria-label="Toggle repeat" title="Repeat track">↻</button><span>♫</span><input id="volumeBar" type="range" min="0" max="1" step="0.01" value="0.7"></div>
+    </section>
+    <section class="playlist-section">
+      <div class="section-heading"><div><div class="eyebrow">PICK YOUR VIBE</div><h2>Your music library</h2></div><button id="randomTrackButton" class="secondary-button">Surprise me</button><span id="playlistCount">0 TRACKS</span></div>
+      <div class="library-tools">
+        <input id="trackSearch" type="search" placeholder="Search tracks or moods…" aria-label="Search tracks">
+        <select id="playlistSelect" aria-label="Choose a playlist"><option value="all">All tracks</option></select>
+        <div class="library-filters" role="group" aria-label="Filter tracks">
+          <button type="button" class="filter-button active" data-library-filter="all" aria-pressed="true">All songs</button>
+          <button type="button" class="filter-button" data-library-filter="favorites" aria-pressed="false">♡ Favorites</button>
+        </div>
+        <button id="createPlaylistButton" class="secondary-button">＋ Create playlist</button>
+        <button id="addTrackButton" class="secondary-button" disabled>Add current track</button>
+        <button id="deletePlaylistButton" class="secondary-button danger" hidden>Delete playlist</button>
+      </div>
+      <div id="playlist" class="playlist"></div>
+      <p class="keyboard-hint">Quick keys: <kbd>Space</kbd> play/pause · <kbd>←</kbd>/<kbd>→</kbd> previous/next · <kbd>F</kbd> favorite · <kbd>/</kbd> search</p>
+    </section>
+    <footer><span>VibeTune</span><span>Your music, your mood, your moment.</span></footer>
+  </main>
+  <button id="assistantLauncher" class="assistant-launcher" type="button" aria-label="Open VibeTune music assistant" aria-expanded="false" aria-controls="assistantPanel"><span aria-hidden="true">✦</span><span>Music guide</span></button>
+  <section id="assistantPanel" class="assistant-panel" role="dialog" aria-modal="false" aria-labelledby="assistantTitle" hidden>
+    <header class="assistant-header">
+      <div><span class="assistant-status-dot"></span><strong id="assistantTitle">VibeTune Music Guide</strong><small>Private suggestions from your library</small></div>
+      <button id="assistantClose" class="assistant-close" type="button" aria-label="Close music guide">×</button>
+    </header>
+    <div id="assistantMessages" class="assistant-messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+    <div class="assistant-suggestions" aria-label="Suggested messages">
+      <button type="button" data-assistant-prompt="I want something calm">Calm</button>
+      <button type="button" data-assistant-prompt="I need energy">Energy</button>
+      <button type="button" data-assistant-prompt="I need to focus">Focus</button>
+      <button type="button" data-assistant-prompt="Surprise me">Surprise me</button>
+    </div>
+    <form id="assistantForm" class="assistant-form">
+      <button id="assistantMic" class="assistant-mic" type="button" aria-label="Speak to music guide" title="Speak">🎙</button>
+      <input id="assistantInput" type="text" placeholder="Tell me what you feel like…" autocomplete="off" aria-label="Message the music guide">
+      <button class="assistant-send" type="submit" aria-label="Send message">↗</button>
+    </form>
+    <label class="assistant-voice-toggle"><input id="assistantSpeak" type="checkbox"> Read replies aloud</label>
+  </section>
+  <audio id="audio" preload="metadata"></audio>
+  <div id="toast" class="toast" role="status"></div>
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script>window.VOXTUNE_USER_TRACKS = {{ user_tracks|tojson }};</script>
+  <script defer src="{{ url_for('static', filename='js/core.js') }}?v=1"></script>
+  <script defer src="{{ url_for('static', filename='js/library.js') }}?v=1"></script>
+  <script defer src="{{ url_for('static', filename='js/player.js') }}?v=1"></script>
+  <script defer src="{{ url_for('static', filename='js/camera.js') }}?v=2"></script>
+  <script defer src="{{ url_for('static', filename='js/app.js') }}?v=4"></script>
+</body></html>
